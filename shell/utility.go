@@ -89,12 +89,9 @@ func runCommand(command string, state *State, environment []string, workingDirec
 
 	// Run the command to completion
 	err = cmd.Run()
-	if err != nil {
-		return nil, fmt.Errorf("Error running command: '%v'", err)
-	}
 	pw.Close()
-
 	log.Printf("[DEBUG] Command execution completed. Reading from output pipe: >&3")
+
 	//read back diff output from pipe
 	data := make([]byte, maxBufSize)
 	pr.Read(data)
@@ -102,6 +99,10 @@ func runCommand(command string, state *State, environment []string, workingDirec
 	log.Printf("[DEBUG] shell script command stdout: \"%s\"", stdout.String())
 	log.Printf("[DEBUG] shell script command stderr: \"%s\"", stderr.String())
 	log.Printf("[DEBUG] shell script command output: \"%s\"", string(data))
+
+	if err != nil {
+		return nil, fmt.Errorf("Error running command: '%v'", err)
+	}
 
 	output, err := parseJSON(data)
 	if err != nil {
