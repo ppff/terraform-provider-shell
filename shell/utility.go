@@ -4,13 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/armon/circbuf"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
-
-	"github.com/armon/circbuf"
 )
 
 // State is a wrapper around both the input and output attributes that are relavent for updates
@@ -50,7 +49,11 @@ func parseJSON(b []byte) (map[string]string, error) {
 	err := json.Unmarshal([]byte(s), &f)
 	output := make(map[string]string)
 	for k, v := range f {
-		output[k] = v.(string)
+		outputString, ok := v.(string)
+		if !ok {
+			outputString = fmt.Sprint(v)
+		}
+		output[k] = outputString
 	}
 	return output, err
 }
