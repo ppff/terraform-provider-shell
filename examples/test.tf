@@ -100,3 +100,44 @@ resource "shell_script" "test4" {
     yolo = "yolo"
   }
 }
+
+//test complete resource
+resource "shell_script" "test5" {
+  lifecycle_commands {
+    create = file("${path.module}/scripts/create.sh")
+    read = file("${path.module}/scripts/read.sh")
+    update = file("${path.module}/scripts/update.sh")
+    delete = file("${path.module}/scripts/delete.sh")
+  }
+
+  working_directory = "${path.module}"
+
+  environment = {
+    yolo = "yolo"
+    ball = "room"
+  }
+}
+
+output "commit_id2" {
+  value = shell_script.test5.output["commit_id"]
+}
+
+//resource with triggers
+resource "shell_script" "test6" {
+  lifecycle_commands {
+    create = file("${path.module}/scripts/create.sh")
+    read = file("${path.module}/scripts/read.sh")
+    delete = file("${path.module}/scripts/delete.sh")
+  }
+
+  working_directory = "${path.module}"
+
+  environment = {
+    yolo = "yolo"
+    ball = "room"
+  }
+
+  triggers = {
+    abc = 123
+  }
+}
