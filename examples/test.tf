@@ -2,16 +2,18 @@ provider "shell" {}
 
 
 //test complete data resource 
-data "shell_script" "test" {
+resource "shell_script" "test" {
   lifecycle_commands {
-    read = <<EOF
-      echo '{"commit_id": "b8f2b8b"}' >&3
+    create = <<EOF
+      touch test.sh
+      while 1 do echo test > test.sh >&3
     EOF
+    delete = "rm -rf test.sh"
   }
-}
-
-output "commit_id" {
-  value = data.shell_script.test.output["commit_id"]
+  timeouts {
+    create = "1m"
+    delete = "2m"
+  }
 }
 
 //test resource with no read or update
@@ -75,7 +77,7 @@ resource "shell_script" "test4" {
 }
 
 //test complete resource
-resource "shell_script" "test5" {
+/*resource "shell_script" "test5" {
   lifecycle_commands {
     create = file("${path.module}/scripts/create.sh")
     read   = file("${path.module}/scripts/read.sh")
@@ -89,12 +91,16 @@ resource "shell_script" "test5" {
     yolo = "yolo"
     ball = "room"
   }
+  timeouts {
+    create = "1m"
+    delete = "1m"
+  }
 }
 
 output "commit_id2" {
   value = shell_script.test5.output["commit_id"]
 }
-
+*/
 //resource with triggers
 resource "shell_script" "test6" {
   lifecycle_commands {

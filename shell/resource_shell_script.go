@@ -1,11 +1,11 @@
 package shell
 
 import (
-	"log"
-	"reflect"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/rs/xid"
+	"log"
+	"reflect"
+	"time"
 )
 
 func resourceShellScript() *schema.Resource {
@@ -71,6 +71,12 @@ func resourceShellScript() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
+		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(1 * time.Minute),
+			Read:   schema.DefaultTimeout(1 * time.Minute),
+			Update: schema.DefaultTimeout(1 * time.Minute),
+			Delete: schema.DefaultTimeout(1 * time.Minute),
 		},
 	}
 }
