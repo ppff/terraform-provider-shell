@@ -9,7 +9,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"reflect"
 	"runtime"
+	"strconv"
 )
 
 // State is a wrapper around both the input and output attributes that are relavent for updates
@@ -48,12 +50,22 @@ func parseJSON(b []byte) (map[string]string, error) {
 	var f map[string]interface{}
 	err := json.Unmarshal([]byte(s), &f)
 	output := make(map[string]string)
+	outputData := ""
 	for k, v := range f {
-		outputString, ok := v.(string)
+		_, ok := v.(string)
 		if !ok {
-			outputString = fmt.Sprint(v)
+			switch fmt.Sprint(reflect.TypeOf(v)) {
+			case "float64":
+				outputData = strconv.FormatFloat(v.(float64), 'f', -1, 64)
+			case "int64":
+				outputData = fmt.Sprint(v)
+			case "bool":
+				outputData = strconv.FormatBool(v.(bool))
+			}
+		} else {
+			outputData = v.(string)
 		}
-		output[k] = outputString
+		output[k] = outputData
 	}
 	return output, err
 }
