@@ -1,17 +1,21 @@
 package shell
 
 import (
-	"log"
-	"time"
-
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/rs/xid"
+	"log"
+	"time"
 )
 
 func dataSourceShellScript() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceShellScriptRead,
-
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
+		},
 		Schema: map[string]*schema.Schema{
 			"lifecycle_commands": {
 				Type:     schema.TypeList,
@@ -50,12 +54,6 @@ func dataSourceShellScript() *schema.Resource {
 				Computed: true,
 				Elem:     schema.TypeString,
 			},
-		},
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(1 * time.Minute),
-			Read:   schema.DefaultTimeout(1 * time.Minute),
-			Update: schema.DefaultTimeout(1 * time.Minute),
-			Delete: schema.DefaultTimeout(1 * time.Minute),
 		},
 	}
 }

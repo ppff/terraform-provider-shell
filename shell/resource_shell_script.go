@@ -14,6 +14,12 @@ func resourceShellScript() *schema.Resource {
 		Delete: resourceShellScriptDelete,
 		Read:   resourceShellScriptRead,
 		Update: resourceShellScriptUpdate,
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(10 * time.Minute),
+			Read:   schema.DefaultTimeout(10 * time.Minute),
+			Update: schema.DefaultTimeout(10 * time.Minute),
+			Delete: schema.DefaultTimeout(10 * time.Minute),
+		},
 		Schema: map[string]*schema.Schema{
 			"lifecycle_commands": {
 				Type:     schema.TypeList,
@@ -71,12 +77,6 @@ func resourceShellScript() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
-		},
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(1 * time.Minute),
-			Read:   schema.DefaultTimeout(1 * time.Minute),
-			Update: schema.DefaultTimeout(1 * time.Minute),
-			Delete: schema.DefaultTimeout(1 * time.Minute),
 		},
 	}
 }

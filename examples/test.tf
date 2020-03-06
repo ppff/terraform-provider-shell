@@ -1,19 +1,19 @@
 provider "shell" {}
 
-
-//test complete data resource 
-resource "shell_script" "test" {
+//test complete data resource
+data "shell_script" "test" {
   lifecycle_commands {
     create = <<EOF
-      touch test.sh
-      while 1 do echo test > test.sh >&3
+      touch test
     EOF
-    delete = "rm -rf test.sh"
+    read = <<EOF
+      echo '{"commit_id": "b8f2b8b"}' >&3
+    EOF
   }
-  timeouts {
-    create = "1m"
-    delete = "2m"
-  }
+}
+
+output "commit_id" {
+  value = data.shell_script.test.output["commit_id"]
 }
 
 //test resource with no read or update
@@ -77,7 +77,7 @@ resource "shell_script" "test4" {
 }
 
 //test complete resource
-/*resource "shell_script" "test5" {
+resource "shell_script" "test5" {
   lifecycle_commands {
     create = file("${path.module}/scripts/create.sh")
     read   = file("${path.module}/scripts/read.sh")
@@ -91,16 +91,12 @@ resource "shell_script" "test4" {
     yolo = "yolo"
     ball = "room"
   }
-  timeouts {
-    create = "1m"
-    delete = "1m"
-  }
 }
 
 output "commit_id2" {
   value = shell_script.test5.output["commit_id"]
 }
-*/
+
 //resource with triggers
 resource "shell_script" "test6" {
   lifecycle_commands {
@@ -118,5 +114,31 @@ resource "shell_script" "test6" {
 
   triggers = {
     abc = 123
+  }
+}
+
+//resource with triggers
+resource "shell_script" "test7" {
+  lifecycle_commands {
+    create = file("${path.module}/scripts/create.sh")
+    read   = file("${path.module}/scripts/read.sh")
+    delete = file("${path.module}/scripts/delete.sh")
+  }
+
+  working_directory = "${path.module}"
+
+  environment = {
+    yolo = "yolo"
+    ball = "room"
+  }
+
+  triggers = {
+    abc = 123
+  }
+  timeouts {
+    create = "2m"
+    delete = "3m"
+    update = "2m"
+    read = "5m"
   }
 }
